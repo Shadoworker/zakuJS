@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Zaku JS | Testing</title>
+</head>
+<body >
+
+<style type="text/css">
+	body
+	{
+		margin: 0 auto;
+	}
+</style>
+
+<div style="width: 100%; height: 600px;">
+  <svg width='100%' height='100%' xmlns='http://www.w3.org/2000/svg'
+   onload='Init(evt)'
+   onmousedown='Grab(evt)'
+   onmousemove='Drag(evt)'
+   onmouseup='Drop(evt)'>
+ 
+      
+       <path id='liner1' d="M 150,150 a 50,50 40 1 0 50,50" fill="none" stroke="tomato" stroke-width="3"/>
+        
+
+       <!-- <path id='liner2' d="M 290,100 h 100 v 80 h -100 v -80 z " fill='blue' opacity="0.6"/> -->
+ 
+      
+       <!-- <path id='liner3' d="M 25,75 Q 50,150 75,100 T 150,150" fill="none" stroke="#000" stroke-width="3" /> -->
+               
+ 
+
+
+
+
+
+  </svg>
+</div>
+
+  <script type="text/javascript">
+	  	
+
+
+	      var SVGDocument = null;
+	      var SVGRoot = null;
+
+	      var TrueCoords = null;
+	      var GrabPoint = null;
+	      var DragTarget = null;
+
+	      function Init(evt)
+	      {
+	         SVGRoot = evt.target;
+
+	         SVGDocument = SVGRoot;
+
+	         // these svg points hold x and y values...
+	         // very handy, but they do not display on the screen (just so you know)
+	         TrueCoords = SVGRoot.createSVGPoint();
+	         GrabPoint  = SVGRoot.createSVGPoint();
+	      }
+
+	      function Grab(evt)
+	      {
+	         // find out which element we moused down on
+	         var targetElement = evt.target;
+	            
+	            //set the item moused down on as the element to be dragged
+	            DragTarget = targetElement;
+	 
+	            DragTarget.parentNode.appendChild( DragTarget );
+	 
+	            DragTarget.setAttributeNS(null, 'pointer-events', 'none');
+	 
+	            var transMatrix = DragTarget.getCTM();
+	            GrabPoint.x = TrueCoords.x - Number(transMatrix.e);
+	            GrabPoint.y = TrueCoords.y - Number(transMatrix.f);
+	 
+	      };
+
+
+	      function Drag(evt)
+	      {
+
+
+	         // account for zooming and panning
+	         GetTrueCoords(evt);
+
+
+	         // if we don't currently have an element in tow, don't do anything
+	         if (DragTarget)
+	         { 
+	            var newX = TrueCoords.x - GrabPoint.x;
+	            var newY = TrueCoords.y - GrabPoint.y;
+	 
+	            DragTarget.setAttributeNS(null, 'transform', 'translate(' + newX + ',' + newY + ')');
+                
+
+                var movePointX = parseInt(DragTarget.getAttribute('cx'),10);
+                var movePointY = parseInt(DragTarget.getAttribute('cy'),10);
+
+
+	             var movePointType  = DragTarget.getAttribute('type');
+	             var movePointNature  = DragTarget.getAttribute('nature');
+	             var pathArrayIndex = DragTarget.getAttribute('pathArrayIndex');
+	             var pointIndex = DragTarget.getAttribute('pointIndex');
+
+ 
+
+
+               if(zaku.isMonoVal(movePointType))
+		      	 {
+                    var mpoints = zaku.getMonoValPoint(pathArray, pathArrayIndex , movePointType);
+
+			        /*Updating point and pathArray*/
+			        var newpathArray = zaku.setMonoValPoint(pathArray, pathArrayIndex, pointIndex, movePointType ,mpoints, newX, newY, movePointX, movePointY)
+			     
+                    zaku.update(elem , newpathArray)
+
+		      	 }
+
+
+               if(zaku.isBiVal(movePointType))
+		      	 {
+                     
+                    var mpoints = zaku.getBiValPoint(pathArray, pathArrayIndex , movePointType);
+ 
+				      /*Updating point and pathArray*/
+				      var newpathArray = zaku.setBiValPoint(pathArray, pathArrayIndex, pointIndex, movePointType ,mpoints, newX, newY, movePointX, movePointY)
+				     
+                    zaku.update(elem , newpathArray)
+
+		      	 }
+
+               if(zaku.isQuadriVal(movePointType))
+		      	 {
+                     
+                    var mpoints = zaku.getQuadriValPoint(pathArray, pathArrayIndex , movePointType);
+ 
+				      /*Updating point and pathArray*/
+				      var newpathArray = zaku.setQuadriValPoint(pathArray, pathArrayIndex, pointIndex, movePointType ,mpoints, newX, newY, movePointX, movePointY)
+				      
+                    zaku.update(elem , newpathArray)
+
+		      	 }
+
+		       
+               if(zaku.isSixVal(movePointType))
+		      	 {
+                     
+                    var mpoints = zaku.getSixValPoint(pathArray, pathArrayIndex , movePointType);
+ 
+				      /*Updating point and pathArray*/
+				      var newpathArray = zaku.setSixValPoint(pathArray, pathArrayIndex, pointIndex, movePointType ,mpoints, newX, newY, movePointX, movePointY)
+				      
+                    zaku.update(elem , newpathArray)
+
+		      	 }
+
+
+                  /*Updating points positions*/
+			     zaku.updatepoints(elem, pathArray);
+                 // console.log(pathArray);
+
+   	         }
+	      };
+
+
+	      function Drop(evt)
+	      {
+	         // if we aren't currently dragging an element, don't do anything
+	         if ( DragTarget )
+	         {
+	            // since the element currently being dragged has its pointer-events turned off,
+	            //    we are afforded the opportunity to find out the element it's being dropped on
+	            var targetElement = evt.target;
+
+	            // turn the pointer-events back on, so we can grab this item later
+	            DragTarget.setAttributeNS(null, 'pointer-events', 'all');
+	            if ( 'Folder' == targetElement.parentNode.id )
+	            {
+	               // if the dragged element is dropped on an element that is a child
+	               //    of the folder group, it is inserted as a child of that group
+	               targetElement.parentNode.appendChild( DragTarget );
+	            }
+	            else
+	            {
+	               // for this example, you cannot drag an item out of the folder once it's in there;
+	               //    however, you could just as easily do so here
+	            }
+
+	            // set the global variable to null, so nothing will be dragged until we
+	            //    grab the next element
+	            DragTarget = null;
+	         }
+	      };
+
+
+	      function GetTrueCoords(evt)
+	      {
+	         // find the current zoom level and pan setting, and adjust the reported
+	         //    mouse position accordingly
+	         var newScale = SVGRoot.currentScale;
+	         var translation = SVGRoot.currentTranslate;
+	         TrueCoords.x = (evt.clientX - translation.x)/newScale;
+	         TrueCoords.y = (evt.clientY - translation.y)/newScale;
+	      };
+
+  </script>
+ 
+
+  <script src="zaku-b.js"></script>
+  
+  <script type="text/javascript">
+  	
+    var zaku = new zaku();
+
+    var elem = zaku.get('liner1');
+
+    var path = zaku.path(elem);
+    
+    window.pathArray = zaku.split(path);
+
+    console.log(pathArray)
+
+    zaku.setpoints(elem, pathArray);
+    
+ 
+ 
+  </script>
+
+</body>
+</html>
