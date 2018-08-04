@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Zaku JS | EXAMPLE</title>
+</head>
+<body >
+
+<style type="text/css">
+	body
+	{
+		margin: 0 auto;
+	}
+</style>
+
+<div style="width: 100%; height: 600px;">
+  <svg width='100%' height='100%' xmlns='http://www.w3.org/2000/svg' >
+
+
+       <!-- <path id='liner1' d="M 150,150 a 50,50 40 1 0 50,50"  fill="none" stroke="tomato" stroke-width="3"/> -->
+       <!-- <path id='liner1' d="M 100,100 C72.39, 210.46, 139.54, 322.39, 250, 350 C360.46, 377.61, 472.39, 310.46, 500, 200" fill="none" stroke="tomato" stroke-width="3"/> -->
+
+       <path id='liner1' d="m 150,150 c -20.22309,0 -38.45503,12.18218 -46.19363,30.86554 -7.738588,18.68333 -3.45974,40.18818 10.84009,54.488 14.29982,14.29983 35.80467,18.57868 54.488,10.84009 C 187.81782,238.45503 202,220.22309 202,200" fill="none" stroke="tomato" stroke-width="3"/>
+
+
+
+  </svg>
+</div>
+
+  <script type="text/javascript">
+	  	
+ 
+  </script>
+ 
+  <!-- Load Zaku.js -->
+  <script src="dist/zaku.js"></script>
+  
+  <script type="text/javascript">
+  	
+  	//1 : Create a zaku instance
+    var zaku = new zaku();
+
+    //2 : Get a svg pathElement
+    var elem = zaku.get('liner1');
+
+    //3 : Get the pathElement path data
+    zaku.path(elem);
+
+    //4 : Set control points on the path (shape)
+    zaku.setpoints();
+
+    //5 : Init manipulation actions (events)
+    zaku.initEvents();
+ 
+ 
+  </script>
+
+</body>
+</html>
