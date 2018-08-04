@@ -4,7 +4,7 @@ ZakuJS is a Js framework for dealing with svg path rigging and transition(animat
 
 ## How it looks
 
-
+<img src="img/sample.png"/>
 
 
 ## Installation
