@@ -25,7 +25,8 @@ Add the library to your page
 
 ```javascript
     //#2 : Get a svg pathElement
-    var elem = zaku.get('liner1'); 
+    var elem = zaku.get('samba'); /*samba as ID*/
+    
 ```
 
 
